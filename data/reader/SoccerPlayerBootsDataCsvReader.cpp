@@ -8,7 +8,7 @@
 
 void SoccerPlayerBootsDataCsvReader::readCsvData(const vector<string>& paths) {
     // 샘플 수가 너무 적어 학습에 부적합한 클래스 제외
-    const set<string> excludedTypes = {"Heritage", "Striking"};
+    const set<string> excludedTypes = {"Heritage", "Striking", "Agility"};
 
     for(const string& path : paths) {
         rapidcsv::Document doc(path);

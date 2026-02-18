@@ -17,8 +17,10 @@ private:
     vector<string> bootsNames;
     // 해당 축구화 신는 사람들의 인원
     map<string, int> bootsCount;
-    // 각 리스트 컬럼 별 값 갯수
+    // 각 리스트 컬럼 별 고유 값 갯수 (어휘 크기)
     map<string, int> listCategoryCount;
+    // 각 텍스트 컬럼 별 고유 값 갯수 (라플라스 스무딩용)
+    map<string, int> textCategoryCount;
     // [축구화이름][키] = 해당 부츠타입+키 조합의 총 단어 수
     map<string, map<string, int>> listCategoryTotalWords;
 
@@ -34,13 +36,16 @@ public:
             const vector<string>& bootsNames,
             const map<string, int>& bootsCount,
             const map<string, int>& listCategoryCount,
+            const map<string, int>& textCategoryCount,
             const map<string, map<string, int>>& listCategoryTotalWords,
             const map<string, double>& priors,
             const map<string, map<string, pair<double, double>>>& numericLikelihoods,
             const map<string, map<string, map<string, int>>>& categoryLikelihoods
     )
-    : bootsNames(bootsNames), priors(priors), bootsCount(bootsCount), listCategoryCount(listCategoryCount),
-    numericLikelihoods(numericLikelihoods), categoryLikelihoods(categoryLikelihoods), listCategoryTotalWords(listCategoryTotalWords) {};
+    : bootsNames(bootsNames), priors(priors), bootsCount(bootsCount),
+    listCategoryCount(listCategoryCount), textCategoryCount(textCategoryCount),
+    numericLikelihoods(numericLikelihoods), categoryLikelihoods(categoryLikelihoods),
+    listCategoryTotalWords(listCategoryTotalWords) {};
 
     [[nodiscard]] map<string, double> getPriors() const;
     [[nodiscard]] map<string, map<string, pair<double, double>>> getNumericLikelihoods() const;
@@ -49,6 +54,7 @@ public:
     [[nodiscard]] vector<string> getBootsNames() const;
     [[nodiscard]] map<string, int> getBootsCount() const;
     [[nodiscard]] map<string, int> getListCategoryCount() const;
+    [[nodiscard]] map<string, int> getTextCategoryCount() const;
 };
 
 

@@ -5,7 +5,9 @@
 #include <sstream>
 #include "SoccerPlayerBoots.h"
 
-const vector<pair<string, string>> SoccerPlayerBoots::textKeys{};
+const vector<pair<string, string>> SoccerPlayerBoots::textKeys{
+        {"player_nationality", "player_nationality"},
+};
 
 const vector<pair<string, string>> SoccerPlayerBoots::numKeys{
         {"player_age",    "player_age"},

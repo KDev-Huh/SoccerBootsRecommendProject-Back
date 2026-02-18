@@ -134,15 +134,31 @@ map<string, int> SoccerBootsBayesianTrainer::extractListCategoryCount(const vect
     return listCategoryCount;
 }
 
+map<string, int> SoccerBootsBayesianTrainer::extractTextCategoryCount(const vector<SoccerPlayerBoots>& data) {
+    map<string, set<string>> uniqueValues;
+
+    for(auto& d : data) {
+        for(auto& [variableKey, _] : SoccerPlayerBoots::textKeys)
+            uniqueValues[variableKey].insert(d.getText(variableKey));
+    }
+
+    map<string, int> textCategoryCount;
+    for(auto& [key, vals] : uniqueValues)
+        textCategoryCount[key] = (int)vals.size();
+
+    return textCategoryCount;
+}
+
 SoccerBootsBayesianModel SoccerBootsBayesianTrainer::fit(const vector<SoccerPlayerBoots>& data) {
     map<string, double> priors = calculatePriors(data);
     map<string, int> bootsCount = countBoots(data);
     map<string, int> listCategoryCount = extractListCategoryCount(data);
+    map<string, int> textCategoryCount = extractTextCategoryCount(data);
     map<string, map<string, pair<double, double>>> numericLikelihoods = calculateNumLikelihoods(data);
     map<string, map<string, map<string, int>>> categoryLikelihoods = calculateCategoryLikelihoods(data);
     map<string, map<string, int>> listCategoryTotalWords = extractListCategoryTotalWords(data);
     vector<string> bootsNames = extractBootsNames(data);
 
-    return SoccerBootsBayesianModel(bootsNames, bootsCount, listCategoryCount, listCategoryTotalWords,
-                                    priors, numericLikelihoods, categoryLikelihoods);
+    return SoccerBootsBayesianModel(bootsNames, bootsCount, listCategoryCount, textCategoryCount,
+                                    listCategoryTotalWords, priors, numericLikelihoods, categoryLikelihoods);
 }

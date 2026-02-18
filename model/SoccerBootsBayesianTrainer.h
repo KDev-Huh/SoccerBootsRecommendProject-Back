@@ -17,6 +17,7 @@ class SoccerBootsBayesianTrainer {
 private:
     static vector<string> extractBootsNames(const vector<SoccerPlayerBoots>& data);
     static map<string, int> extractListCategoryCount(const vector<SoccerPlayerBoots>& data);
+    static map<string, int> extractTextCategoryCount(const vector<SoccerPlayerBoots>& data);
 
     static map<string, double> calculatePriors(const vector<SoccerPlayerBoots>& data);
     static map<string, int> countBoots(const vector<SoccerPlayerBoots>& data);

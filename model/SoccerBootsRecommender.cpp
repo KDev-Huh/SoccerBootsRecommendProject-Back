@@ -16,16 +16,9 @@ pair<string, double> SoccerBootsRecommender::predict(
         auto priors = model.getPriors();
         double bayesResult = log(priors[bootsName]);
 
-        // text
-        for(auto& [key, value] : textInputs) {
-            double textLikelihood = calculateTextLikelihoods(bootsName, key, value);
-            if(textLikelihood == 0) {
-                bayesResult = -INFINITY;
-                // -INFINITY에 아무리 더해도 의미 없어서 break;
-                break;
-            }
-            bayesResult += log(textLikelihood);
-        }
+        // text (라플라스 스무딩으로 0이 나오지 않으므로 바로 log 합산)
+        for(auto& [key, value] : textInputs)
+            bayesResult += log(calculateTextLikelihoods(bootsName, key, value));
 
         // num
         for(auto& [key, value] : numInputs)
@@ -44,18 +37,22 @@ pair<string, double> SoccerBootsRecommender::predict(
 pair<string, double> SoccerBootsRecommender::calculateResult(const map<string, double>& results) {
     string bastBootsName;
     double maxScore = -INFINITY;
-    double totalEvidence = 0.0;
 
+    // argmax 탐색
     for(auto& [bootsName, score] : results) {
         if(score > maxScore) {
             bastBootsName = bootsName;
             maxScore = score;
         }
-
-        totalEvidence += exp(score);
     }
 
-    double possibilityProbability = exp(maxScore) / totalEvidence;
+    // log-sum-exp: maxScore를 빼서 exp 언더플로우 방지
+    double sumExp = 0.0;
+    for(auto& [bootsName, score] : results)
+        sumExp += exp(score - maxScore);
+
+    // P(best|x) = exp(maxScore) / sum(exp(scores)) = 1 / sum(exp(scores - maxScore))
+    double possibilityProbability = 1.0 / sumExp;
 
     return {bastBootsName, possibilityProbability};
 }
@@ -63,8 +60,14 @@ pair<string, double> SoccerBootsRecommender::calculateResult(const map<string, d
 double SoccerBootsRecommender::calculateTextLikelihoods(const string& bootsName, const string& key, const string& value) {
     auto categoryLikelihoods = model.getCategoryLikelihoods();
     auto bootsCount = model.getBootsCount();
+    auto textCategoryCount = model.getTextCategoryCount();
 
-    return ((double) categoryLikelihoods[bootsName][key][value]) / bootsCount[bootsName];
+    // 라플라스 스무딩 적용: 미등장 값도 0이 되지 않도록
+    int count = categoryLikelihoods[bootsName][key][value];
+    int total = bootsCount[bootsName];
+    int vocabSize = textCategoryCount.count(key) ? textCategoryCount.at(key) : 1;
+
+    return (double)(count + 1) / (double)(total + vocabSize);
 }
 
 double SoccerBootsRecommender::calculateNumLikelihoods(const std::string &bootsName, const std::string &key, const double &value) {

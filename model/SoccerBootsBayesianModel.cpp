@@ -31,3 +31,7 @@ map<string, int> SoccerBootsBayesianModel::getBootsCount() const {
 map<string, int> SoccerBootsBayesianModel::getListCategoryCount() const {
     return listCategoryCount;
 }
+
+map<string, int> SoccerBootsBayesianModel::getTextCategoryCount() const {
+    return textCategoryCount;
+}
