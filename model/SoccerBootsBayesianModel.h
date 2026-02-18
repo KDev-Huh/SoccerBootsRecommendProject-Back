@@ -19,8 +19,8 @@ private:
     map<string, int> bootsCount;
     // 각 리스트 컬럼 별 값 갯수
     map<string, int> listCategoryCount;
-    // [축구화이름] = 43회 해당 모델의 총 단어 수 (리스트 안에 있는 단어)
-    map<string, int> listCategoryTotalWords;
+    // [축구화이름][키] = 해당 부츠타입+키 조합의 총 단어 수
+    map<string, map<string, int>> listCategoryTotalWords;
 
     map<string, double> priors;
     // [축구화이름][스탯이름] = {평균, 분산}
@@ -34,7 +34,7 @@ public:
             const vector<string>& bootsNames,
             const map<string, int>& bootsCount,
             const map<string, int>& listCategoryCount,
-            const map<string, int>& listCategoryTotalWords,
+            const map<string, map<string, int>>& listCategoryTotalWords,
             const map<string, double>& priors,
             const map<string, map<string, pair<double, double>>>& numericLikelihoods,
             const map<string, map<string, map<string, int>>>& categoryLikelihoods
@@ -45,7 +45,7 @@ public:
     [[nodiscard]] map<string, double> getPriors() const;
     [[nodiscard]] map<string, map<string, pair<double, double>>> getNumericLikelihoods() const;
     [[nodiscard]] map<string, map<string, map<string, int>>> getCategoryLikelihoods() const;
-    [[nodiscard]] map<string, int> getListCategoryTotalWords() const;
+    [[nodiscard]] map<string, map<string, int>> getListCategoryTotalWords() const;
     [[nodiscard]] vector<string> getBootsNames() const;
     [[nodiscard]] map<string, int> getBootsCount() const;
     [[nodiscard]] map<string, int> getListCategoryCount() const;

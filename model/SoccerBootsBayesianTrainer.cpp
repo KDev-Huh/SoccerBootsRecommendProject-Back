@@ -56,14 +56,14 @@ map<string, map<string, map<string, int>>> SoccerBootsBayesianTrainer::calculate
     return categoryLikelihoods;
 }
 
-map<string, int> SoccerBootsBayesianTrainer::extractListCategoryTotalWords(const vector<SoccerPlayerBoots> &data) {
-    map<string, int> listCategoryTotalWords;
+map<string, map<string, int>> SoccerBootsBayesianTrainer::extractListCategoryTotalWords(const vector<SoccerPlayerBoots> &data) {
+    map<string, map<string, int>> listCategoryTotalWords;
 
     for(auto& d : data) {
         string bootsName = d.getLabel();
 
         for(auto& [variableKey, _] : SoccerPlayerBoots::listKeys)
-            listCategoryTotalWords[bootsName] += d.getList(variableKey).size();
+            listCategoryTotalWords[bootsName][variableKey] += d.getList(variableKey).size();
     }
 
     return listCategoryTotalWords;
@@ -118,14 +118,18 @@ vector<string> SoccerBootsBayesianTrainer::extractBootsNames(const vector<Soccer
 }
 
 map<string, int> SoccerBootsBayesianTrainer::extractListCategoryCount(const vector<SoccerPlayerBoots>& data) {
-    map<string, int> listCategoryCount;
+    map<string, set<string>> uniqueValues;
 
     for(auto& d : data) {
         for(auto& k : SoccerPlayerBoots::listKeys) {
-            vector<string> values = d.getList(k.first);
-            listCategoryCount[k.first] = (int)values.size();
+            for(auto& v : d.getList(k.first))
+                uniqueValues[k.first].insert(v);
         }
     }
+
+    map<string, int> listCategoryCount;
+    for(auto& [key, vals] : uniqueValues)
+        listCategoryCount[key] = (int)vals.size();
 
     return listCategoryCount;
 }
@@ -136,7 +140,7 @@ SoccerBootsBayesianModel SoccerBootsBayesianTrainer::fit(const vector<SoccerPlay
     map<string, int> listCategoryCount = extractListCategoryCount(data);
     map<string, map<string, pair<double, double>>> numericLikelihoods = calculateNumLikelihoods(data);
     map<string, map<string, map<string, int>>> categoryLikelihoods = calculateCategoryLikelihoods(data);
-    map<string, int> listCategoryTotalWords = extractListCategoryTotalWords(data);
+    map<string, map<string, int>> listCategoryTotalWords = extractListCategoryTotalWords(data);
     vector<string> bootsNames = extractBootsNames(data);
 
     return SoccerBootsBayesianModel(bootsNames, bootsCount, listCategoryCount, listCategoryTotalWords,

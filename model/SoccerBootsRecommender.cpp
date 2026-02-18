@@ -90,10 +90,12 @@ double SoccerBootsRecommender::calculateGaussian(const double& x, const double& 
 
 // 로그 가우시안
 double SoccerBootsRecommender::calculateLogGaussian(const double& x, const double& m, const double& v) {
-    if (v == 0) return (x == m) ? 0.0 : -1e9; // 로그에서는 0이 매우 작은 음수
+    // 분산이 너무 작으면 최소값을 적용해 극단적 확률 방지
+    const double MIN_VAR = 1e-2;
+    double safeV = max(v, MIN_VAR);
 
-    double term1 = -0.5 * log(2 * M_PI * v);
-    double term2 = -pow(x - m, 2) / (2 * v);
+    double term1 = -0.5 * log(2 * M_PI * safeV);
+    double term2 = -pow(x - m, 2) / (2 * safeV);
 
     return term1 + term2;
 }
@@ -106,7 +108,7 @@ double SoccerBootsRecommender::calculateListLikelihoods(const std::string &boots
 
     for(auto& v : value) {
         int numerator = categoryLikelihoods[bootsName][key][v] + 1;
-        int denominator = listCategoryTotalWords[bootsName] + listCategoryCount[key];
+        int denominator = listCategoryTotalWords[bootsName][key] + listCategoryCount[key];
 
         // 라플라스 스무딩 적용
         double prob = (double)numerator / (double)denominator;

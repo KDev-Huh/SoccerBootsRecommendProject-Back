@@ -20,7 +20,7 @@ private:
 
     static map<string, double> calculatePriors(const vector<SoccerPlayerBoots>& data);
     static map<string, int> countBoots(const vector<SoccerPlayerBoots>& data);
-    static map<string, int> extractListCategoryTotalWords(const vector<SoccerPlayerBoots>& data);
+    static map<string, map<string, int>> extractListCategoryTotalWords(const vector<SoccerPlayerBoots>& data);
     static map<string, map<string, map<string, int>>> calculateCategoryLikelihoods(const vector<SoccerPlayerBoots>& data);
     static map<string, map<string, pair<double, double>>> calculateNumLikelihoods(const vector<SoccerPlayerBoots>& data);
 

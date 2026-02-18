@@ -16,7 +16,7 @@ map<string, map<string, map<string, int>>> SoccerBootsBayesianModel::getCategory
     return categoryLikelihoods;
 }
 
-map<string, int> SoccerBootsBayesianModel::getListCategoryTotalWords() const {
+map<string, map<string, int>> SoccerBootsBayesianModel::getListCategoryTotalWords() const {
     return listCategoryTotalWords;
 }
 
