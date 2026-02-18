@@ -24,9 +24,10 @@ int main() {
     SoccerBootsBayesianTrainer trainer;
     SoccerBootsBayesianModel model = trainer.fit(trainTestSplit.train);
 
-    double accuracy = SoccerBootsEvaluator::evaluateAccuracy(model, trainTestSplit.test);
-
-    cout << "정확도 : " << accuracy << endl;
+    double trainAccuracy = SoccerBootsEvaluator::evaluateAccuracy(model, trainTestSplit.train);
+    cout << "훈련 데이터 정확도 : " << trainAccuracy << endl;
+    double testAccuracy = SoccerBootsEvaluator::evaluateAccuracy(model, trainTestSplit.test);
+    cout << "테스트 데이터 정확도 : " << testAccuracy << endl;
 
     return 0;
 }
