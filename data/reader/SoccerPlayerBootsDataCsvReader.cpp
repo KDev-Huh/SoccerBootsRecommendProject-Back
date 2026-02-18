@@ -13,6 +13,9 @@ void SoccerPlayerBootsDataCsvReader::readCsvData(const vector<string>& paths) {
         for (size_t i = 0; i < doc.GetRowCount(); ++i) {
             SoccerPlayerBoots p;
 
+            // 결과 레이블 (축구화 이름) 삽입
+            p.setLabel(doc.GetCell<string>("BootsName", i));
+
             // 텍스트 데이터 삽입
             for(auto& [variableKey, dataKey] : SoccerPlayerBoots::textKeys)
                 p.addText(variableKey, doc.GetCell<string>(dataKey, i));
@@ -25,7 +28,7 @@ void SoccerPlayerBootsDataCsvReader::readCsvData(const vector<string>& paths) {
             for(auto& [variableKey, dataKey] : SoccerPlayerBoots::listKeys)
                 p.addList(variableKey, doc.GetCell<string>(dataKey, i));
 
-            if (!p.getText("boots_name").empty()) {
+            if (!p.getLabel().empty()) {
                 playerBoots.push_back(p);
             }
         }

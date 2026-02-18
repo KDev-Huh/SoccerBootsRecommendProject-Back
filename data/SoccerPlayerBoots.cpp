@@ -5,12 +5,7 @@
 #include <sstream>
 #include "SoccerPlayerBoots.h"
 
-const vector<pair<string, string>> SoccerPlayerBoots::textKeys{
-        {"player_name",         "player_name"},
-        {"player_nationality",  "player_nationality"},
-        {"boots_name",          "BootsName"},
-        {"player_shirt_number", "player_shirt_number"},
-};
+const vector<pair<string, string>> SoccerPlayerBoots::textKeys{};
 
 const vector<pair<string, string>> SoccerPlayerBoots::numKeys{
         {"player_age",    "player_age"},
@@ -60,6 +55,10 @@ void SoccerPlayerBoots::addText(const string& key, const string& value) {
     textStats[key] = value;
 }
 
+void SoccerPlayerBoots::setLabel(const string& value) {
+    label = value;
+}
+
 void SoccerPlayerBoots::addList(const string& key, string listStr) {
     listStats[key]; // 빈 리스트라도 키가 반드시 존재하도록 초기화
 
@@ -83,6 +82,10 @@ double SoccerPlayerBoots::getNum(const string& key) const {
 
 string SoccerPlayerBoots::getText(const string& key) const {
     return textStats.at(key);
+}
+
+string SoccerPlayerBoots::getLabel() const {
+    return label;
 }
 
 vector<string> SoccerPlayerBoots::getList(const string& key) const {

@@ -15,7 +15,7 @@ map<string, double> SoccerBootsBayesianTrainer::calculatePriors(const vector<Soc
 
     double allBootsCount = 0;
     for(auto d : data) {
-        string bootsName = d.getText("boots_name");
+        string bootsName = d.getLabel();
         bootsCount[bootsName]++;
         allBootsCount++;
     }
@@ -31,7 +31,7 @@ map<string, int> SoccerBootsBayesianTrainer::countBoots(const vector<SoccerPlaye
     map<string, int> bootsCount;
 
     for(auto d : data) {
-        string bootsName = d.getText("boots_name");
+        string bootsName = d.getLabel();
         bootsCount[bootsName]++;
     }
 
@@ -41,7 +41,7 @@ map<string, int> SoccerBootsBayesianTrainer::countBoots(const vector<SoccerPlaye
 map<string, map<string, map<string, int>>> SoccerBootsBayesianTrainer::calculateCategoryLikelihoods(const vector<SoccerPlayerBoots>& data) {
     map<string, map<string, map<string, int>>> categoryLikelihoods;
     for(auto& d : data) {
-        string bootsName = d.getText("boots_name");
+        string bootsName = d.getLabel();
 
         for(auto& [variableKey, _] : SoccerPlayerBoots::textKeys)
             categoryLikelihoods[bootsName][variableKey][d.getText(variableKey)]++;
@@ -60,7 +60,7 @@ map<string, int> SoccerBootsBayesianTrainer::extractListCategoryTotalWords(const
     map<string, int> listCategoryTotalWords;
 
     for(auto& d : data) {
-        string bootsName = d.getText("boots_name");
+        string bootsName = d.getLabel();
 
         for(auto& [variableKey, _] : SoccerPlayerBoots::listKeys)
             listCategoryTotalWords[bootsName] += d.getList(variableKey).size();
@@ -74,7 +74,7 @@ map<string, map<string, pair<double, double>>> SoccerBootsBayesianTrainer::calcu
     map<string, map<string, vector<double>>> bootsFeatureValues;
 
     for(auto& d : data) {
-        string bootsName = d.getText("boots_name");
+        string bootsName = d.getLabel();
 
         for(auto& [variableKey, _] : SoccerPlayerBoots::numKeys)
             bootsFeatureValues[bootsName][variableKey].push_back(d.getNum(variableKey));
@@ -111,7 +111,7 @@ double SoccerBootsBayesianTrainer::variance(const vector<double>& values) {
 vector<string> SoccerBootsBayesianTrainer::extractBootsNames(const vector<SoccerPlayerBoots>& data) {
     set<string> bootsNames;
     for(auto& d : data) {
-        bootsNames.insert(d.getText("boots_name"));
+        bootsNames.insert(d.getLabel());
     }
 
     return {bootsNames.begin(), bootsNames.end()};

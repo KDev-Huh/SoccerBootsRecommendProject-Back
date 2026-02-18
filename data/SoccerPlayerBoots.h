@@ -15,6 +15,7 @@ private:
     map<string, double> numericStats;
     map<string, string> textStats;
     map<string, vector<string>> listStats;
+    string label;
 public:
     const static vector<pair<string, string>> textKeys;
     const static vector<pair<string, string>> numKeys;
@@ -23,10 +24,12 @@ public:
     void addNumeric(const string& key, const double& value);
     void addText(const string& key, const string& value);
     void addList(const string& key, string listStr);
+    void setLabel(const string& value);
 
     [[nodiscard]] double getNum(const string& key) const;
     [[nodiscard]] string getText(const string& key) const;
     [[nodiscard]] vector<string> getList(const string& key) const;
+    [[nodiscard]] string getLabel() const;
 
     [[nodiscard]] vector<pair<string, double>> convertNumVectorPair() const;
     [[nodiscard]] vector<pair<string, string>> convertTextVectorPair() const;

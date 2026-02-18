@@ -13,10 +13,7 @@ double SoccerBootsEvaluator::evaluateAccuracy(const SoccerBootsBayesianModel &mo
     double correctCount = 0;
     int count = 1;
     for(auto data : testData) {
-        string soccerBoots = data.getText("boots_name");
-        data.removeText("boots_name");
-        data.removeText("player_name");
-        data.removeText("player_shirt_number");
+        string soccerBoots = data.getLabel();
 
         pair<string, double> result = recommender.predict(
                 data.convertTextVectorPair(),
