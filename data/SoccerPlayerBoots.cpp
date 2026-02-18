@@ -88,3 +88,28 @@ string SoccerPlayerBoots::getText(const string& key) const {
 vector<string> SoccerPlayerBoots::getList(const string& key) const {
     return listStats.at(key);
 }
+
+vector<pair<string, double>> SoccerPlayerBoots::convertNumVectorPair() const {
+    vector<pair<string, double>> results;
+    for (const auto &[k, v]: numericStats)
+        results.emplace_back(k, v);
+    return results;
+}
+
+vector<pair<string, string>> SoccerPlayerBoots::convertTextVectorPair() const {
+    vector<pair<string, string>> results;
+    for(const auto& [k, v] : textStats)
+        results.emplace_back(k, v);
+    return results;
+}
+
+vector<pair<string, vector<string>>> SoccerPlayerBoots::convertListVectorPair() const {
+    vector<pair<string, vector<string>>> results;
+    for(const auto& [k, v] : listStats)
+        results.emplace_back(k, v);
+    return results;
+}
+
+void SoccerPlayerBoots::removeText(const std::string &key) {
+    textStats.erase(key);
+}

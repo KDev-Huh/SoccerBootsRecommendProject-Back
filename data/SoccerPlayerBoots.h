@@ -27,6 +27,12 @@ public:
     [[nodiscard]] double getNum(const string& key) const;
     [[nodiscard]] string getText(const string& key) const;
     [[nodiscard]] vector<string> getList(const string& key) const;
+
+    [[nodiscard]] vector<pair<string, double>> convertNumVectorPair() const;
+    [[nodiscard]] vector<pair<string, string>> convertTextVectorPair() const;
+    [[nodiscard]] vector<pair<string, vector<string>>> convertListVectorPair() const;
+
+    void removeText(const string& key);
 };
 
 

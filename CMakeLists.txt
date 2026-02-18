@@ -18,12 +18,11 @@ endif()
 # Crow에서 필요한 threads 라이브러리 찾기
 find_package(Threads REQUIRED)
 
-add_executable(soccer_boots_bayes_project
-        main.cpp
+add_library(core_library
         data/SoccerPlayerBoots.cpp
         data/SoccerPlayerBoots.h
-        reader/SoccerPlayerBootsDataCsvReader.cpp
-        reader/SoccerPlayerBootsDataCsvReader.h
+        data/reader/SoccerPlayerBootsDataCsvReader.cpp
+        data/reader/SoccerPlayerBootsDataCsvReader.h
         model/SoccerBootsBayesianTrainer.cpp
         model/SoccerBootsBayesianTrainer.h
         model/SoccerBootsRecommender.cpp
@@ -34,7 +33,17 @@ add_executable(soccer_boots_bayes_project
         api/ApiServer.h
         model/SoccerBootsBayesianModel.cpp
         model/SoccerBootsBayesianModel.h
+        evaluator/SoccerBootsEvaluator.cpp
+        evaluator/SoccerBootsEvaluator.h
+        data/splitter/SoccerBootsDataSplitter.cpp
+        data/splitter/SoccerBootsDataSplitter.h
 )
+
+add_executable(soccer_boots_bayes_project main.cpp)
+target_link_libraries(soccer_boots_bayes_project core_library)
+
+add_executable(evaluate evaluator/evaluateModel.cpp)
+target_link_libraries(evaluate core_library)
 
 # threads 라이브러리 링크
 target_link_libraries(soccer_boots_bayes_project Threads::Threads)
