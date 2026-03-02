@@ -24,13 +24,13 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.29.0/cmake-3.29.0
 # ... (ONNX 설치 및 나머지 빌드 과정 동일)
 
 # ONNX Runtime 다운로드, 압축 해제, 및 라이브러리 경로 설정
-# v1.20.1: opset 22 지원
-RUN wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.20.1/onnxruntime-linux-x64-1.20.1.tgz \
-    && tar -xzf onnxruntime-linux-x64-1.20.1.tgz \
+# v1.24.2: opset 22 완전 지원 (최신 안정 버전)
+RUN wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.24.2/onnxruntime-linux-x64-1.24.2.tgz \
+    && tar -xzf onnxruntime-linux-x64-1.24.2.tgz \
     && mkdir -p /usr/local/include/onnxruntime \
-    && cp -r onnxruntime-linux-x64-1.20.1/include/* /usr/local/include/onnxruntime/ \
-    && cp -r onnxruntime-linux-x64-1.20.1/lib/* /usr/local/lib/ \
-    && rm -rf onnxruntime-linux-x64-1.20.1.tgz onnxruntime-linux-x64-1.20.1 \
+    && cp -r onnxruntime-linux-x64-1.24.2/include/* /usr/local/include/onnxruntime/ \
+    && cp -r onnxruntime-linux-x64-1.24.2/lib/* /usr/local/lib/ \
+    && rm -rf onnxruntime-linux-x64-1.24.2.tgz onnxruntime-linux-x64-1.24.2 \
     && ldconfig
 
 # 소스 복사
