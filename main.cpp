@@ -15,8 +15,6 @@ std::vector<std::string> getNumericFeatureOrder() {
 }
 
 int main() {
-    std::cout << "--- SERVER STARTING ---" << std::endl;
-    std::cout.flush();
     // 1. 데이터 로드
     const std::vector<std::string> datasetPaths{
         "./datasets/germany-bundesliga-players_boots.csv",
@@ -26,9 +24,6 @@ int main() {
 
     SoccerPlayerBootsDataCsvReader reader;
     reader.readCsvData(datasetPaths);
-
-    std::cout << "--- SERVER READ ---" << std::endl;
-    std::cout.flush();
 
     // 2. 베이지안 모델 학습
     SoccerBootsBayesianTrainer trainer;
@@ -48,9 +43,6 @@ int main() {
 
     // 수치형 피처 순서 설정
     rfRecommender.setNumericFeatureOrder(getNumericFeatureOrder());
-
-    std::cout << "--- SERVER PREPARE ---" << std::endl;
-    std::cout.flush();
 
     // 5. API 서버 설정 및 실행
     RecommendationController controller(bayesianRecommender, rfRecommender);
