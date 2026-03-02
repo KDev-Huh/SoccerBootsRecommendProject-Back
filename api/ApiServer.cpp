@@ -5,9 +5,16 @@
 #include "ApiServer.h"
 
 ApiServer::ApiServer(int port)
-    : port_(port) {}
+    : port_(port) {
+    // Global CORS 설정
+    auto& cors = app_.get_middleware<crow::CORSHandler>();
+    cors.global()
+        .origin("*")
+        .methods("POST"_method, "GET"_method, "OPTIONS"_method)
+        .headers("Content-Type", "Accept", "Origin");
+}
 
-crow::SimpleApp& ApiServer::getApp() {
+crow::App<crow::CORSHandler>& ApiServer::getApp() {
     return app_;
 }
 

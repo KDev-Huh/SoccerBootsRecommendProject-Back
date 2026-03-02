@@ -6,10 +6,11 @@
 #define SOCCER_BOOTS_BAYES_PROJECT_APISERVER_H
 
 #include <crow.h>
+#include <crow/middlewares/cors.h>
 
 class ApiServer {
 private:
-    crow::SimpleApp app_;
+    crow::App<crow::CORSHandler> app_;
     int port_;
 
 public:
@@ -17,7 +18,7 @@ public:
     explicit ApiServer(int port = 8080);
 
     // 컨트롤러가 라우트를 등록할 수 있도록 app 참조 반환
-    crow::SimpleApp& getApp();
+    crow::App<crow::CORSHandler>& getApp();
 
     void run();
 };

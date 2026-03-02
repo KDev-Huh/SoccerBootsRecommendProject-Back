@@ -15,25 +15,12 @@ RecommendationController::RecommendationController(
     RandomForestRecommender& rfRecommender
 ) : bayesianRecommender_(bayesianRecommender), rfRecommender_(rfRecommender) {}
 
-void RecommendationController::addCorsHeaders(crow::response& res) {
-    res.set_header("Access-Control-Allow-Origin", "*");
-    res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    res.set_header("Access-Control-Allow-Headers", "Content-Type, Accept, Origin");
-}
-
-crow::response RecommendationController::handleOptions(const crow::request& /*req*/) const {
-    auto res = crow::response(200);
-    addCorsHeaders(res);
-    return res;
-}
 
 crow::response RecommendationController::handlePostBayesian(const crow::request& req) {
     const auto body = crow::json::load(req.body);
 
     if (!body) {
-        auto res = crow::response(400);
-        addCorsHeaders(res);
-        return res;
+        return crow::response(400);
     }
 
     // 텍스트 입력 파싱
@@ -64,18 +51,14 @@ crow::response RecommendationController::handlePostBayesian(const crow::request&
     resBody["boots"] = bootsName;
     resBody["prob"]  = probability;
 
-    auto res = crow::response{resBody};
-    addCorsHeaders(res);
-    return res;
+    return crow::response{resBody};
 }
 
 crow::response RecommendationController::handlePostRandomForest(const crow::request& req) {
     const auto body = crow::json::load(req.body);
 
     if (!body) {
-        auto res = crow::response(400);
-        addCorsHeaders(res);
-        return res;
+        return crow::response(400);
     }
 
     // 텍스트 입력 파싱
@@ -106,31 +89,15 @@ crow::response RecommendationController::handlePostRandomForest(const crow::requ
     resBody["boots"] = bootsName;
     resBody["prob"]  = probability;
 
-    auto res = crow::response{resBody};
-    addCorsHeaders(res);
-    return res;
+    return crow::response{resBody};
 }
 
-void RecommendationController::registerRoutes(crow::SimpleApp& app) {
-    // CORS 프리플라이트 요청 처리 - Bayesian
-    CROW_ROUTE(app, "/recommend/soccer-boots/bayesian")
-        .methods("OPTIONS"_method)
-        ([this](const crow::request& req) {
-            return handleOptions(req);
-        });
-
+void RecommendationController::registerRoutes(crow::App<crow::CORSHandler>& app) {
     // 축구화 추천 요청 처리 - Bayesian
     CROW_ROUTE(app, "/recommend/soccer-boots/bayesian")
         .methods("POST"_method)
         ([this](const crow::request& req) {
             return handlePostBayesian(req);
-        });
-
-    // CORS 프리플라이트 요청 처리 - Random Forest
-    CROW_ROUTE(app, "/recommend/soccer-boots/random-forest")
-        .methods("OPTIONS"_method)
-        ([this](const crow::request& req) {
-            return handleOptions(req);
         });
 
     // 축구화 추천 요청 처리 - Random Forest

@@ -6,6 +6,7 @@
 #define SOCCER_BOOTS_BAYES_PROJECT_RECOMMENDATIONCONTROLLER_H
 
 #include <crow.h>
+#include <crow/middlewares/cors.h>
 #include "model/bayesian/SoccerBootsRecommender.h"
 #include "model/random_forest/RandomForestRecommender.h"
 
@@ -14,10 +15,6 @@ private:
     SoccerBootsRecommender& bayesianRecommender_;
     RandomForestRecommender& rfRecommender_;
 
-    static void addCorsHeaders(crow::response& res);
-
-    // [[nodiscard]]는 반환값 사용 강제함
-    [[nodiscard]] crow::response handleOptions(const crow::request& req) const;
     crow::response handlePostBayesian(const crow::request& req);
     crow::response handlePostRandomForest(const crow::request& req);
 
@@ -27,7 +24,7 @@ public:
         RandomForestRecommender& rfRecommender
     );
 
-    void registerRoutes(crow::SimpleApp& app);
+    void registerRoutes(crow::App<crow::CORSHandler>& app);
 };
 
 #endif //SOCCER_BOOTS_BAYES_PROJECT_RECOMMENDATIONCONTROLLER_H
