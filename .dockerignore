@@ -1,0 +1,27 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+.DS_Store
+
+# Build artifacts (will be rebuilt in Docker)
+cmake-build-debug/CMakeFiles
+cmake-build-debug/CMakeCache.txt
+cmake-build-debug/*.cmake
+cmake-build-debug/Makefile
+
+# Documentation
+README.md
+*.md
+
+# Test scripts
+test_rf_api.sh
+test_simple.sh
+
+# Python files
+*.py
+__pycache__
+*.pyc
