@@ -17,9 +17,9 @@ std::vector<std::string> getNumericFeatureOrder() {
 int main() {
     // 1. 데이터 로드
     const std::vector<std::string> datasetPaths{
-        "../datasets/germany-bundesliga-players_boots.csv",
-        "../datasets/premier-league-players_boots.csv",
-        "../datasets/spain-laliga-players_boots.csv"
+        "./datasets/germany-bundesliga-players_boots.csv",
+        "./datasets/premier-league-players_boots.csv",
+        "./datasets/spain-laliga-players_boots.csv"
     };
 
     SoccerPlayerBootsDataCsvReader reader;
@@ -33,7 +33,7 @@ int main() {
     SoccerBootsRecommender bayesianRecommender(model);
 
     // 4. 랜덤포레스트 추천기 생성
-    RandomForestRecommender rfRecommender("../model/random_forest/rf_model.onnx");
+    RandomForestRecommender rfRecommender("./model/random_forest/rf_model.onnx");
 
     // 축구화 레이블 설정 (베이지안 모델에서 가져오기)
     rfRecommender.setBootsLabels(model.getBootsNames());
