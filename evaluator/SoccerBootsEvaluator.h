@@ -7,7 +7,7 @@
 
 
 #include "data/SoccerPlayerBoots.h"
-#include "model/SoccerBootsRecommender.h"
+#include "model/bayesian/SoccerBootsRecommender.h"
 
 class SoccerBootsEvaluator {
 public:

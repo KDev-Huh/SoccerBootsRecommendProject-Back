@@ -23,16 +23,16 @@ add_library(core_library
         data/SoccerPlayerBoots.h
         data/reader/SoccerPlayerBootsDataCsvReader.cpp
         data/reader/SoccerPlayerBootsDataCsvReader.h
-        model/SoccerBootsBayesianTrainer.cpp
-        model/SoccerBootsBayesianTrainer.h
-        model/SoccerBootsRecommender.cpp
-        model/SoccerBootsRecommender.h
+        model/bayesian/SoccerBootsBayesianTrainer.cpp
+        model/bayesian/SoccerBootsBayesianTrainer.h
+        model/bayesian/SoccerBootsRecommender.cpp
+        model/bayesian/SoccerBootsRecommender.h
         api/RecommendationController.cpp
         api/RecommendationController.h
         api/ApiServer.cpp
         api/ApiServer.h
-        model/SoccerBootsBayesianModel.cpp
-        model/SoccerBootsBayesianModel.h
+        model/bayesian/SoccerBootsBayesianModel.cpp
+        model/bayesian/SoccerBootsBayesianModel.h
         evaluator/SoccerBootsEvaluator.cpp
         evaluator/SoccerBootsEvaluator.h
         data/splitter/SoccerBootsDataSplitter.cpp

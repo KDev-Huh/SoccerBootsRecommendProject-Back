@@ -6,7 +6,7 @@
 #define SOCCER_BOOTS_BAYES_PROJECT_RECOMMENDATIONCONTROLLER_H
 
 #include <crow.h>
-#include "model/SoccerBootsRecommender.h"
+#include "model/bayesian/SoccerBootsRecommender.h"
 
 class RecommendationController {
 private:

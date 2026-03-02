@@ -1,6 +1,6 @@
 #include "data/reader/SoccerPlayerBootsDataCsvReader.h"
-#include "model/SoccerBootsBayesianTrainer.h"
-#include "model/SoccerBootsRecommender.h"
+#include "model/bayesian/SoccerBootsBayesianTrainer.h"
+#include "model/bayesian/SoccerBootsRecommender.h"
 #include "api/ApiServer.h"
 #include "api/RecommendationController.h"
 

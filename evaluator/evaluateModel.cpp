@@ -5,15 +5,13 @@
 #include <iostream>
 #include "data/reader/SoccerPlayerBootsDataCsvReader.h"
 #include "data/splitter/SoccerBootsDataSplitter.h"
-#include "model/SoccerBootsBayesianTrainer.h"
-#include "model/SoccerBootsRecommender.h"
+#include "model/bayesian/SoccerBootsBayesianTrainer.h"
+#include "model/bayesian/SoccerBootsRecommender.h"
 #include "evaluator/SoccerBootsEvaluator.h"
 
 int main() {
     const std::vector<std::string> datasetPaths{
-            "../datasets/germany-bundesliga-players_boots.csv",
-            "../datasets/premier-league-players_boots.csv",
-            "../datasets/spain-laliga-players_boots.csv"
+            "../datasets/knn_smote_soccer_boots_data.csv"
     };
 
     SoccerPlayerBootsDataCsvReader reader;

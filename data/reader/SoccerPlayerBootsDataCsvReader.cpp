@@ -18,7 +18,7 @@ void SoccerPlayerBootsDataCsvReader::readCsvData(const vector<string>& paths) {
             SoccerPlayerBoots p;
 
             // 결과 레이블 (축구화 타입) 삽입
-            p.setLabel(doc.GetCell<string>("BootsType", i));
+            p.setLabel(doc.GetCell<string>("BootsName", i));
 
             // 텍스트 데이터 삽입
             for(auto& [variableKey, dataKey] : SoccerPlayerBoots::textKeys)
