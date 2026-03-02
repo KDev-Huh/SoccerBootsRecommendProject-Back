@@ -113,28 +113,28 @@ crow::response RecommendationController::handlePostRandomForest(const crow::requ
 
 void RecommendationController::registerRoutes(crow::SimpleApp& app) {
     // CORS 프리플라이트 요청 처리 - Bayesian
-    CROW_ROUTE(app, "/recommend/soccer-boots")
+    CROW_ROUTE(app, "/recommend/soccer-boots/bayesian")
         .methods("OPTIONS"_method)
         ([this](const crow::request& req) {
             return handleOptions(req);
         });
 
     // 축구화 추천 요청 처리 - Bayesian
-    CROW_ROUTE(app, "/recommend/soccer-boots")
+    CROW_ROUTE(app, "/recommend/soccer-boots/bayesian")
         .methods("POST"_method)
         ([this](const crow::request& req) {
             return handlePostBayesian(req);
         });
 
     // CORS 프리플라이트 요청 처리 - Random Forest
-    CROW_ROUTE(app, "/recommend/soccer-boots-rf")
+    CROW_ROUTE(app, "/recommend/soccer-boots/random-forest")
         .methods("OPTIONS"_method)
         ([this](const crow::request& req) {
             return handleOptions(req);
         });
 
     // 축구화 추천 요청 처리 - Random Forest
-    CROW_ROUTE(app, "/recommend/soccer-boots-rf")
+    CROW_ROUTE(app, "/recommend/soccer-boots/random-forest")
         .methods("POST"_method)
         ([this](const crow::request& req) {
             return handlePostRandomForest(req);

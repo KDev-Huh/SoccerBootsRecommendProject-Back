@@ -36,7 +36,7 @@ soccer_boots_bayes_project/
 │
 ├── api/
 │   ├── ApiServer.h/.cpp               # Crow HTTP 서버 래퍼
-│   └── RecommendationController.h/.cpp # /recommend/soccer-boots 라우트 핸들러
+│   └── RecommendationController.h/.cpp # API 라우트 핸들러
 │
 ├── datasets/
 │   ├── germany-bundesliga-players_boots.csv
@@ -139,11 +139,11 @@ cd cmake-build-debug
 
 ## API 명세
 
-### `POST /recommend/soccer-boots` (Naive Bayes)
+### `POST /recommend/soccer-boots/bayesian` (Naive Bayes)
 
 선수 스탯을 입력받아 나이브 베이즈 모델로 가장 적합한 축구화와 확률을 반환합니다.
 
-### `POST /recommend/soccer-boots-rf` (Random Forest)
+### `POST /recommend/soccer-boots/random-forest` (Random Forest)
 
 선수 스탯을 입력받아 랜덤포레스트 모델(ONNX)로 가장 적합한 축구화와 확률을 반환합니다.
 
@@ -199,7 +199,8 @@ Content-Type: application/json
 모든 오리진(`*`)에 대해 CORS를 허용합니다. 프론트엔드에서 직접 호출 가능합니다.
 
 ```http
-OPTIONS /recommend/soccer-boots  → 200 OK
+OPTIONS /recommend/soccer-boots/bayesian         → 200 OK
+OPTIONS /recommend/soccer-boots/random-forest    → 200 OK
 ```
 
 ---
@@ -237,7 +238,7 @@ OPTIONS /recommend/soccer-boots  → 200 OK
 **Random Forest 모델 테스트 예시**:
 
 ```bash
-curl -X POST http://localhost:8080/recommend/soccer-boots-rf \
+curl -X POST http://localhost:8080/recommend/soccer-boots/random-forest \
   -H "Content-Type: application/json" \
   -d '{
     "textInputs": [],
@@ -285,7 +286,7 @@ curl -X POST http://localhost:8080/recommend/soccer-boots-rf \
 **Naive Bayes 모델** (유연함 - 일부 피처만 입력 가능):
 
 ```bash
-curl -X POST http://localhost:8080/recommend/soccer-boots \
+curl -X POST http://localhost:8080/recommend/soccer-boots/bayesian \
   -H "Content-Type: application/json" \
   -d '{
     "textInputs": [],
