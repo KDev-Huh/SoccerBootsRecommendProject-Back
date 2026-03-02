@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     ninja-build \
     libasio-dev \
     wget \
+    git \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -30,9 +31,19 @@ RUN wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.17.1/o
     && rm -rf onnxruntime-linux-x64-1.17.1.tgz onnxruntime-linux-x64-1.17.1 \
     && ldconfig
 
-# 소스 복사 및 빌드
+# 소스 복사
 WORKDIR /app
 COPY . .
+
+# Crow C++ HTTP Framework 다운로드 (배포 환경에서 Crow가 없을 수 있음)
+RUN if [ ! -d "/app/Crow/include" ]; then \
+        echo "Downloading Crow framework..."; \
+        git clone https://github.com/CrowCpp/Crow.git --depth 1 --branch v1.0+5 /tmp/Crow && \
+        cp -r /tmp/Crow /app/Crow && \
+        rm -rf /tmp/Crow; \
+    else \
+        echo "Using existing Crow framework"; \
+    fi
 
 # build 폴더를 새로 만들어 Release 모드로 빌드
 RUN mkdir -p build && cd build && \
