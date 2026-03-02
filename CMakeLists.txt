@@ -20,7 +20,8 @@ endif()
 # 1. 헤더 파일 찾기 (경로 유연성 확보)
 find_path(ONNXRUNTIME_INCLUDE_DIR
         NAMES onnxruntime_cxx_api.h onnxruntime/onnxruntime_cxx_api.h
-        HINTS /usr/local/include /usr/include /opt/homebrew/include)
+        HINTS /usr/local/include /usr/include /opt/homebrew/include
+        PATH_SUFFIXES onnxruntime)
 
 # 2. 라이브러리 파일 찾기
 find_library(ONNXRUNTIME_LIB
@@ -28,13 +29,12 @@ find_library(ONNXRUNTIME_LIB
         HINTS /usr/local/lib /usr/lib /opt/homebrew/lib)
 
 if(ONNXRUNTIME_INCLUDE_DIR AND ONNXRUNTIME_LIB)
-    include_directories(${ONNXRUNTIME_INCLUDE_DIR})
-    # 만약 헤더가 'onnxruntime/...' 안에 있다면 상위 폴더도 포함
-    if(EXISTS "${ONNXRUNTIME_INCLUDE_DIR}/onnxruntime")
-        include_directories("${ONNXRUNTIME_INCLUDE_DIR}/onnxruntime")
-    endif()
+    # ONNX Runtime 헤더가 /usr/local/include/onnxruntime에 있는 경우
+    # 상위 디렉토리인 /usr/local/include를 포함해야 #include <onnxruntime/...>가 작동함
+    get_filename_component(ONNX_PARENT_DIR "${ONNXRUNTIME_INCLUDE_DIR}" DIRECTORY)
+    include_directories(${ONNX_PARENT_DIR})
     message(STATUS "Found ONNX Runtime: ${ONNXRUNTIME_LIB}")
-    message(STATUS "ONNX Include Dir: ${ONNXRUNTIME_INCLUDE_DIR}")
+    message(STATUS "ONNX Include Dir: ${ONNX_PARENT_DIR}")
 else()
     message(FATAL_ERROR "ONNX Runtime not found. Checked /usr/local/include and /usr/local/lib.")
 endif()
