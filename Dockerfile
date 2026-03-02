@@ -1,7 +1,10 @@
-# Multi-stage build for Soccer Boots Recommender API
+# 1. 빌드 스테이지
 FROM ubuntu:22.04 AS builder
 
-# Install build dependencies
+# 패키지 설치 시 대화창 뜨는 것 방지
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 빌드 의존성 설치
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -11,49 +14,49 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ONNX Runtime
+# ONNX Runtime 설치
 WORKDIR /tmp
-RUN wget https://github.com/microsoft/onnxruntime/releases/download/v1.17.1/onnxruntime-linux-x64-1.17.1.tgz && \
+RUN wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.17.1/onnxruntime-linux-x64-1.17.1.tgz && \
     tar -xzf onnxruntime-linux-x64-1.17.1.tgz && \
     cp -r onnxruntime-linux-x64-1.17.1/include/* /usr/local/include/ && \
     cp -r onnxruntime-linux-x64-1.17.1/lib/* /usr/local/lib/ && \
-    ldconfig && \
-    rm -rf /tmp/onnxruntime*
+    ldconfig
 
-# Set working directory
+# 소스 복사 및 빌드
 WORKDIR /app
-
-# Copy source code
 COPY . .
 
-# Create build directory and build
-WORKDIR /app/cmake-build-debug
-RUN cmake -G Ninja .. && \
-    cmake --build . --target soccer_boots_bayes_project
+# build 폴더를 새로 만들어 Release 모드로 빌드
+RUN mkdir -p build && cd build && \
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .. && \
+    ninja soccer_boots_bayes_project
 
-# Runtime stage
+# 2. 실행 스테이지
 FROM ubuntu:22.04
 
-# Install runtime dependencies
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 실행에 필요한 최소 라이브러리 설치
 RUN apt-get update && apt-get install -y \
     libasio-dev \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy ONNX Runtime libraries from builder
+# 빌드 스테이지에서 생성된 ONNX 라이브러리 복사
 COPY --from=builder /usr/local/lib/libonnxruntime* /usr/local/lib/
 RUN ldconfig
 
-# Set working directory
-WORKDIR /app/cmake-build-debug
+WORKDIR /app
 
-# Copy built executable and necessary files
-COPY --from=builder /app/cmake-build-debug/soccer_boots_bayes_project .
-COPY --from=builder /app/datasets /app/datasets
-COPY --from=builder /app/model /app/model
+# 실행 파일 및 데이터 파일 복사 (경로 단순화)
+COPY --from=builder /app/build/soccer_boots_bayes_project .
+COPY --from=builder /app/datasets ./datasets
+COPY --from=builder /app/model ./model
 
-# Expose API port
+# 실행 권한 부여
+RUN chmod +x ./soccer_boots_bayes_project
+
 EXPOSE 8080
 
-# Run the server
+# 서버 실행
 CMD ["./soccer_boots_bayes_project"]
