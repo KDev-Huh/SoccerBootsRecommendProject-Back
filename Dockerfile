@@ -22,12 +22,12 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.29.0/cmake-3.29.0
 
 # ... (ONNX 설치 및 나머지 빌드 과정 동일)
 
-# ONNX Runtime 설치 및 경로 설정
+# ONNX Runtime 다운로드, 압축 해제, 및 라이브러리 경로 설정
 RUN wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.17.1/onnxruntime-linux-x64-1.17.1.tgz \
     && tar -xzf onnxruntime-linux-x64-1.17.1.tgz \
     && cp -r onnxruntime-linux-x64-1.17.1/include/* /usr/local/include/ \
     && cp -r onnxruntime-linux-x64-1.17.1/lib/* /usr/local/lib/ \
-    && rm -rf onnxruntime-linux-x64-1.17.1* \
+    && rm -rf onnxruntime-linux-x64-1.17.1.tgz onnxruntime-linux-x64-1.17.1 \
     && ldconfig
 
 # 소스 복사 및 빌드
