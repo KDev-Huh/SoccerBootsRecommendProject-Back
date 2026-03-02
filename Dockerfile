@@ -14,6 +14,14 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# CMake 최신 버전 설치 (3.29 이상 확보)
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.29.0/cmake-3.29.0-linux-x86_64.sh && \
+    chmod +x cmake-3.29.0-linux-x86_64.sh && \
+    ./cmake-3.29.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.29.0-linux-x86_64.sh
+
+# ... (ONNX 설치 및 나머지 빌드 과정 동일)
+
 # ONNX Runtime 설치
 WORKDIR /tmp
 RUN wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.17.1/onnxruntime-linux-x64-1.17.1.tgz && \
