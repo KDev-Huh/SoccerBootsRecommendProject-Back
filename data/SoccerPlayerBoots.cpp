@@ -48,6 +48,77 @@ const vector<pair<string, string>> SoccerPlayerBoots::listKeys{
         {"player_style", "player_style"}
 };
 
+const map<string, vector<string>> SoccerPlayerBoots::listVocabularies{
+    {"player_positions", {
+        "Attacking Midfielder",
+        "Defender",
+        "Defensive Midfielder",
+        "Forward",
+        "Goalkeeper",
+        "Midfielder"
+    }},
+    {"strengths", {
+        "Aerial Duels",
+        "Ball interception",
+        "Blocking the ball",
+        "Concentration",
+        "Crossing",
+        "Defensive contribution",
+        "Direct free-kicks",
+        "Dribbling",
+        "Finishing",
+        "Headed attempts",
+        "Holding on to the ball",
+        "Key passes",
+        "Long passing",
+        "Long shots",
+        "Passing",
+        "Penalty saving",
+        "Saving close range shots",
+        "Saving long shots",
+        "Shot stopping (Reflexes)",
+        "Tackling",
+        "Taking set-pieces",
+        "Through balls"
+    }},
+    {"weaknesses", {
+        "Aerial Duels",
+        "Catching crosses",
+        "Concentration",
+        "Crossing",
+        "Defensive contribution",
+        "Discipline",
+        "Finishing",
+        "Holding on to the ball",
+        "Long passing",
+        "Offside awareness",
+        "Passing",
+        "Saving close range shots",
+        "Saving long shots",
+        "Tackling"
+    }},
+    {"player_style", {
+        "Clears the ball out of defence often",
+        "Comes off his line often",
+        "Commits fouls often",
+        "Counter attack threat",
+        "Does not dive into tackles",
+        "Gets fouled often",
+        "Indirect set-piece threat",
+        "Likes to cross",
+        "Likes to cut inside",
+        "Likes to do flick ons",
+        "Likes to do layoffs",
+        "Likes to dribble",
+        "Likes to play long balls",
+        "Likes to play short passes",
+        "Likes to punch the ball",
+        "Likes to shoot from distance",
+        "Likes to tackle",
+        "Plays the ball off the ground often"
+    }}
+};
+
 void SoccerPlayerBoots::addNumeric(const string& key, const double& value) {
     numericStats[key] = value;
 }

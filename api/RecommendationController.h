@@ -7,19 +7,25 @@
 
 #include <crow.h>
 #include "model/bayesian/SoccerBootsRecommender.h"
+#include "model/random_forest/RandomForestRecommender.h"
 
 class RecommendationController {
 private:
-    SoccerBootsRecommender& recommender_;
+    SoccerBootsRecommender& bayesianRecommender_;
+    RandomForestRecommender& rfRecommender_;
 
     static void addCorsHeaders(crow::response& res);
 
     // [[nodiscard]]는 반환값 사용 강제함
     [[nodiscard]] crow::response handleOptions(const crow::request& req) const;
-    crow::response handlePost(const crow::request& req);
+    crow::response handlePostBayesian(const crow::request& req);
+    crow::response handlePostRandomForest(const crow::request& req);
 
 public:
-    explicit RecommendationController(SoccerBootsRecommender& recommender);
+    explicit RecommendationController(
+        SoccerBootsRecommender& bayesianRecommender,
+        RandomForestRecommender& rfRecommender
+    );
 
     void registerRoutes(crow::SimpleApp& app);
 };

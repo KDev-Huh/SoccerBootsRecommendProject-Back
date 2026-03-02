@@ -21,6 +21,9 @@ public:
     const static vector<pair<string, string>> numKeys;
     const static vector<pair<string, string>> listKeys;
 
+    // MultiLabelBinarizer용 vocabulary (knn_smote_soccer_boots_data.csv에서 추출)
+    const static map<string, vector<string>> listVocabularies;
+
     void addNumeric(const string& key, const double& value);
     void addText(const string& key, const string& value);
     void addList(const string& key, string listStr);

@@ -1,8 +1,18 @@
 #include "data/reader/SoccerPlayerBootsDataCsvReader.h"
 #include "model/bayesian/SoccerBootsBayesianTrainer.h"
 #include "model/bayesian/SoccerBootsRecommender.h"
+#include "model/random_forest/RandomForestRecommender.h"
 #include "api/ApiServer.h"
 #include "api/RecommendationController.h"
+
+// 수치형 피처 순서 설정
+std::vector<std::string> getNumericFeatureOrder() {
+    std::vector<std::string> order;
+    for (const auto& [key, _] : SoccerPlayerBoots::numKeys) {
+        order.push_back(key);
+    }
+    return order;
+}
 
 int main() {
     // 1. 데이터 로드
@@ -19,11 +29,23 @@ int main() {
     SoccerBootsBayesianTrainer trainer;
     SoccerBootsBayesianModel model = trainer.fit(reader.getPlayerBoots());
 
-    // 3. 추천기 생성
-    SoccerBootsRecommender recommender(model);
+    // 3. 베이지안 추천기 생성
+    SoccerBootsRecommender bayesianRecommender(model);
 
-    // 4. API 서버 설정 및 실행
-    RecommendationController controller(recommender);
+    // 4. 랜덤포레스트 추천기 생성
+    RandomForestRecommender rfRecommender("../model/random_forest/rf_model.onnx");
+
+    // 축구화 레이블 설정 (베이지안 모델에서 가져오기)
+    rfRecommender.setBootsLabels(model.getBootsNames());
+
+    // Vocabulary 설정 (MultiLabelBinarizer용)
+    rfRecommender.setListVocabularies(SoccerPlayerBoots::listVocabularies);
+
+    // 수치형 피처 순서 설정
+    rfRecommender.setNumericFeatureOrder(getNumericFeatureOrder());
+
+    // 5. API 서버 설정 및 실행
+    RecommendationController controller(bayesianRecommender, rfRecommender);
 
     ApiServer server(8080);
     controller.registerRoutes(server.getApp());

@@ -1,6 +1,14 @@
-# Soccer Boots Recommender - Bayesian Classifier
+# Soccer Boots Recommender - Bayesian & Random Forest
 
-나이브 베이즈 분류기(Naive Bayes Classifier)를 기반으로 축구 선수의 스탯과 성향을 입력받아 최적의 축구화를 추천하는 REST API 서버입니다.
+나이브 베이즈 분류기(Naive Bayes Classifier)와 랜덤포레스트(Random Forest) 모델을 기반으로 축구 선수의 스탯과 성향을 입력받아 최적의 축구화를 추천하는 REST API 서버입니다.
+
+## 주요 특징
+
+- **2가지 머신러닝 모델 지원**
+  - Naive Bayes: C++로 직접 구현한 확률 기반 분류기
+  - Random Forest: ONNX Runtime을 활용한 앙상블 모델
+- **REST API 서버**: Crow 프레임워크 기반 고성능 HTTP 서버
+- **실시간 예측**: 모델 로딩 후 즉시 예측 가능
 
 ---
 
@@ -18,9 +26,13 @@ soccer_boots_bayes_project/
 │   └── rapidcsv.h                    # CSV 파싱 라이브러리
 │
 ├── model/
-│   ├── SoccerBootsBayesianModel.h/.cpp    # 학습된 모델 데이터 컨테이너
-│   ├── SoccerBootsBayesianTrainer.h/.cpp  # 베이즈 모델 학습기 (fit)
-│   └── SoccerBootsRecommender.h/.cpp     # 추천 예측기 (predict)
+│   ├── bayesian/
+│   │   ├── SoccerBootsBayesianModel.h/.cpp    # 학습된 모델 데이터 컨테이너
+│   │   ├── SoccerBootsBayesianTrainer.h/.cpp  # 베이즈 모델 학습기 (fit)
+│   │   └── SoccerBootsRecommender.h/.cpp      # 베이지안 추천 예측기 (predict)
+│   └── random_forest/
+│       ├── RandomForestRecommender.h/.cpp     # 랜덤포레스트 추천기 (ONNX)
+│       └── rf_model.onnx                      # 학습된 랜덤포레스트 ONNX 모델
 │
 ├── api/
 │   ├── ApiServer.h/.cpp               # Crow HTTP 서버 래퍼
@@ -38,6 +50,8 @@ soccer_boots_bayes_project/
 
 ## 동작 원리
 
+### Naive Bayes 모델
+
 ```
 CSV 데이터 로드
     └─> SoccerBootsBayesianTrainer.fit()
@@ -47,6 +61,18 @@ CSV 데이터 로드
                     └─> SoccerBootsBayesianModel (학습 결과 보관)
                             └─> SoccerBootsRecommender.predict()
                                     └─> log P(boots | 입력) 최대값 → 추천 축구화
+```
+
+### Random Forest 모델
+
+```
+사전 학습된 ONNX 모델 로드
+    └─> RandomForestRecommender 생성
+            └─> ONNX Runtime Session 초기화
+                    └─> predict()
+                            ├── 입력 데이터 전처리 (float 배열 변환)
+                            ├── ONNX Runtime 추론 실행
+                            └─> 최대 확률 클래스 → 추천 축구화
 ```
 
 ### 학습에 사용하는 피처
@@ -67,12 +93,13 @@ CSV 데이터 로드
 | CMake | 3.29 이상 |
 | HTTP 프레임워크 | [Crow](https://github.com/CrowCpp/Crow) |
 | ASIO | Homebrew (`asio`) |
+| ONNX Runtime | Homebrew (`onnxruntime`) |
 | 빌드 도구 | Ninja |
 
 ### 의존성 설치 (macOS)
 
 ```bash
-brew install asio
+brew install asio onnxruntime
 ```
 
 ---
@@ -112,9 +139,13 @@ cd cmake-build-debug
 
 ## API 명세
 
-### `POST /recommend/soccer-boots`
+### `POST /recommend/soccer-boots` (Naive Bayes)
 
-선수 스탯을 입력받아 가장 적합한 축구화와 확률을 반환합니다.
+선수 스탯을 입력받아 나이브 베이즈 모델로 가장 적합한 축구화와 확률을 반환합니다.
+
+### `POST /recommend/soccer-boots-rf` (Random Forest)
+
+선수 스탯을 입력받아 랜덤포레스트 모델(ONNX)로 가장 적합한 축구화와 확률을 반환합니다.
 
 #### 요청
 
@@ -173,22 +204,98 @@ OPTIONS /recommend/soccer-boots  → 200 OK
 
 ---
 
-## curl 테스트 예시
+## 테스트 방법
+
+### 방법 1: 테스트 스크립트 사용 (추천)
+
+프로젝트 루트에서:
+
+```bash
+# 두 모델 비교 테스트 (가독성 좋은 JSON)
+./test_rf_api.sh
+
+# 간단한 테스트 (한 줄)
+./test_simple.sh
+```
+
+### 방법 2: curl 직접 사용
+
+**주의**: Random Forest 모델은 **30개 수치형 피처 + 4개 리스트형 피처를 모두** 입력해야 합니다!
+
+**필수 수치형 피처 (30개)**:
+- `player_age`, `player_height`, `apps`, `mins`, `goals`, `assists`, `yel`, `red`
+- `spg`, `ps`, `aerials_won`, `motm`, `rating`, `tackles`, `inter`, `fouls`
+- `offsides`, `clear`, `drb`, `blocks`, `own_g`, `key_p`, `fouled`, `off`
+- `disp`, `uns_tch`, `avg_p`, `crosses`, `long_b`, `thr_b`
+
+**필수 리스트형 피처 (4개)**:
+- `player_positions`: 포지션 리스트 (예: `["Forward", "Right Winger"]`)
+- `strengths`: 강점 리스트 (예: `["Speed", "Dribbling", "Finishing"]`)
+- `weaknesses`: 약점 리스트 (예: `["Defensive contribution"]`)
+- `player_style`: 플레이 스타일 리스트 (예: `["Likes to cut inside"]`)
+
+**Random Forest 모델 테스트 예시**:
+
+```bash
+curl -X POST http://localhost:8080/recommend/soccer-boots-rf \
+  -H "Content-Type: application/json" \
+  -d '{
+    "textInputs": [],
+    "numInputs": [
+      {"key": "player_age", "value": 25},
+      {"key": "player_height", "value": 182},
+      {"key": "apps", "value": 34},
+      {"key": "mins", "value": 2856},
+      {"key": "goals", "value": 18},
+      {"key": "assists", "value": 12},
+      {"key": "yel", "value": 3},
+      {"key": "red", "value": 0},
+      {"key": "spg", "value": 3.2},
+      {"key": "ps", "value": 82.5},
+      {"key": "aerials_won", "value": 45},
+      {"key": "motm", "value": 6},
+      {"key": "rating", "value": 7.45},
+      {"key": "tackles", "value": 28},
+      {"key": "inter", "value": 22},
+      {"key": "fouls", "value": 18},
+      {"key": "offsides", "value": 24},
+      {"key": "clear", "value": 8},
+      {"key": "drb", "value": 85},
+      {"key": "blocks", "value": 5},
+      {"key": "own_g", "value": 0},
+      {"key": "key_p", "value": 68},
+      {"key": "fouled", "value": 52},
+      {"key": "off", "value": 24},
+      {"key": "disp", "value": 38},
+      {"key": "uns_tch", "value": 42},
+      {"key": "avg_p", "value": 35.8},
+      {"key": "crosses", "value": 28},
+      {"key": "long_b", "value": 15},
+      {"key": "thr_b", "value": 2}
+    ],
+    "listInputs": [
+      {"key": "player_positions", "value": ["Forward", "Right Winger"]},
+      {"key": "strengths", "value": ["Speed", "Dribbling", "Finishing"]},
+      {"key": "weaknesses", "value": ["Defensive contribution", "Aerial duels"]},
+      {"key": "player_style", "value": ["Likes to cut inside", "Gets into the box"]}
+    ]
+  }'
+```
+
+**Naive Bayes 모델** (유연함 - 일부 피처만 입력 가능):
 
 ```bash
 curl -X POST http://localhost:8080/recommend/soccer-boots \
   -H "Content-Type: application/json" \
   -d '{
-    "textInputs": [
-      {"key": "player_nationality", "value": "Brazil"}
-    ],
+    "textInputs": [],
     "numInputs": [
       {"key": "player_age", "value": 25},
-      {"key": "goals",      "value": 20}
+      {"key": "goals", "value": 18}
     ],
     "listInputs": [
       {"key": "player_positions", "value": ["Forward"]},
-      {"key": "strengths",        "value": ["Speed", "Finishing"]}
+      {"key": "strengths", "value": ["Speed", "Finishing"]}
     ]
   }'
 ```
