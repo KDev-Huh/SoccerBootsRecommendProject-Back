@@ -16,9 +16,9 @@ RecommendationController::RecommendationController(
 ) : bayesianRecommender_(bayesianRecommender), rfRecommender_(rfRecommender) {}
 
 void RecommendationController::addCorsHeaders(crow::response& res) {
-    res.add_header("Access-Control-Allow-Origin", "*");
-    res.add_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    res.add_header("Access-Control-Allow-Headers", "Content-Type");
+    res.set_header("Access-Control-Allow-Origin", "*");
+    res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    res.set_header("Access-Control-Allow-Headers", "Content-Type, Accept, Origin");
 }
 
 crow::response RecommendationController::handleOptions(const crow::request& /*req*/) const {
